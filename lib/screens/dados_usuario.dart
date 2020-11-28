@@ -2,14 +2,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudfirestoreapp/components/input_field.dart';
 import 'package:cloudfirestoreapp/http/webclients/cep_client.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class DadosUsuario extends StatefulWidget {
+  final String email;
+
+  const DadosUsuario({Key key, this.email}) : super(key: key);
+
   @override
   _DadosUsuarioState createState() => _DadosUsuarioState();
 }
 
 class _DadosUsuarioState extends State<DadosUsuario> {
   final firestoreInstance = FirebaseFirestore.instance;
+  TextEditingController _nomeController = TextEditingController();
+  TextEditingController _sobrenomeController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   TextEditingController _cepController = TextEditingController();
   TextEditingController _logradouroController = TextEditingController();
   TextEditingController _numeroController = TextEditingController();
@@ -18,6 +27,37 @@ class _DadosUsuarioState extends State<DadosUsuario> {
   TextEditingController _estadoController = TextEditingController();
   TextEditingController _telefoneController = TextEditingController();
   TextEditingController _dataNascimentoController = TextEditingController();
+  TextEditingController _pontoGeograficoController = TextEditingController();
+  String _currentSelectedValue = 'SP';
+  List<String> _estados = [
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
+    'DF',
+  ];
 
   void getCep() async {
     var respostaCep = await CepClient.getRespostaCep(_cepController.text);
@@ -25,7 +65,7 @@ class _DadosUsuarioState extends State<DadosUsuario> {
     setState(() {
       _logradouroController.text = respostaCep.logradouro;
       _cidadeController.text = respostaCep.localidade;
-      _estadoController.text = respostaCep.uf;
+      _currentSelectedValue = respostaCep.uf;
     });
   }
 
@@ -55,8 +95,7 @@ class _DadosUsuarioState extends State<DadosUsuario> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                    'Suas informações foram salvas com sucesso!'),
+                Text('Suas informações foram salvas com sucesso!'),
               ],
             ),
           ),
@@ -74,8 +113,21 @@ class _DadosUsuarioState extends State<DadosUsuario> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        _emailController.text = widget.email;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Dados do usuário'),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -84,8 +136,31 @@ class _DadosUsuarioState extends State<DadosUsuario> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: InputField(
+                  controller: _nomeController,
+                  label: 'Nome',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: InputField(
+                  controller: _sobrenomeController,
+                  label: 'Sobrenome',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: InputField(
+                  controller: _emailController,
+                  label: 'E-mail',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: InputField(
                   controller: _cepController,
                   label: 'CEP',
+                  mascara: MaskTextInputFormatter(mask: "#####-###", filter: {"#": RegExp(r'[0-9]')}),
+                  numeros: true,
                 ),
               ),
               Padding(
@@ -105,6 +180,7 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                         child: InputField(
                           controller: _numeroController,
                           label: 'Número',
+                          numeros: true,
                         ),
                       ),
                     ),
@@ -135,11 +211,38 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                     ),
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: InputField(
-                          controller: _estadoController,
-                          label: 'SP',
-                          icone: Icon(Icons.arrow_downward),
+                        padding: const EdgeInsets.only(
+                          left: 8.0,
+                        ),
+                        child: FormField<String>(
+                          builder: (FormFieldState<String> state) {
+                            return InputDecorator(
+                              decoration: InputDecoration(
+                                labelText: 'Estado',
+                                filled: true,
+                                fillColor: Colors.grey[300],
+                              ),
+                              isEmpty: _currentSelectedValue == '',
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: _currentSelectedValue,
+                                  isDense: true,
+                                  onChanged: (String newValue) {
+                                    setState(() {
+                                      _currentSelectedValue = newValue;
+                                      state.didChange(newValue);
+                                    });
+                                  },
+                                  items: _estados.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -149,8 +252,17 @@ class _DadosUsuarioState extends State<DadosUsuario> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: InputField(
+                  controller: _pontoGeograficoController,
+                  label: 'Ponto geográfico',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: InputField(
                   controller: _telefoneController,
                   label: 'Telefone',
+                  mascara: MaskTextInputFormatter(mask: "(##) #####-####", filter: {"#": RegExp(r'[0-9]')}),
+                  numeros: true,
                 ),
               ),
               Padding(
@@ -165,37 +277,21 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                 children: [
                   RaisedButton(
                     color: Theme.of(context).primaryColor,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            'GET CEP',
-                            style: TextStyle(
-                              color: Theme.of(context).accentColor,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      'GET CEP',
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                      ),
                     ),
                     onPressed: () => getCep(),
                   ),
                   RaisedButton(
                     color: Theme.of(context).primaryColor,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            'ENVIAR',
-                            style: TextStyle(
-                              color: Theme.of(context).accentColor,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      'ENVIAR',
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                      ),
                     ),
                     onPressed: () => _onPressed(),
                   ),

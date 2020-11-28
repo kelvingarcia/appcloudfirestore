@@ -1,47 +1,46 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudfirestoreapp/components/input_field.dart';
-import 'package:cloudfirestoreapp/screens/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatefulWidget {
+import 'login.dart';
+
+class SignUp extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _LoginState extends State<Login> {
+class _SignUpState extends State<SignUp> {
   final firestoreInstance = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
 
-  void logInToFb() {
+  void registerToFb() {
     firestoreInstance
-        .signInWithEmailAndPassword(
+        .createUserWithEmailAndPassword(
             email: _emailController.text, password: _senhaController.text)
         .then((result) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Home(email: result.user.email)),
-      );
-    }).catchError((err) {
-      print(err.message);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Erro"),
-              content: Text(err.message),
-              actions: [
-                FlatButton(
-                  child: Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Login()),
+        );
+        }).catchError((err) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Erro"),
+                  content: Text(err.message),
+                  actions: [
+                    FlatButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        });
   }
 
   @override
@@ -59,7 +58,7 @@ class _LoginState extends State<Login> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'LOGIN',
+              'CADASTRO',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
                 fontSize: 24.0,
@@ -91,18 +90,18 @@ class _LoginState extends State<Login> {
                   top: 32.0,
                   bottom: 16.0,
                 ),
-                child: Text('Ainda não possui uma conta? Registre-se'),
+                child: Text('Já possui uma conta? Faça login'),
               ),
             ),
             RaisedButton(
               color: Theme.of(context).primaryColor,
               child: Text(
-                'ENTRAR',
+                'CADASTRAR',
                 style: TextStyle(
                   color: Theme.of(context).accentColor,
                 ),
               ),
-              onPressed: () => logInToFb(),
+              onPressed: () => registerToFb(),
             ),
           ],
         ),

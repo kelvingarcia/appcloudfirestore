@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudfirestoreapp/components/input_field.dart';
 import 'package:cloudfirestoreapp/screens/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -21,7 +21,11 @@ class _LoginState extends State<Login> {
         .then((result) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Home(email: result.user.email)),
+        MaterialPageRoute(
+          builder: (context) => Home(
+            email: result.user.email,
+          ),
+        ),
       );
     }).catchError((err) {
       print(err.message);

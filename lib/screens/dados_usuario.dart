@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudfirestoreapp/components/input_field.dart';
 import 'package:cloudfirestoreapp/http/webclients/cep_client.dart';
+import 'package:cloudfirestoreapp/model/info_usuario.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class DadosUsuario extends StatefulWidget {
   final String email;
+  final InfoUsuario infoUsuario;
 
-  const DadosUsuario({Key key, this.email}) : super(key: key);
+  const DadosUsuario({Key key, this.email, this.infoUsuario}) : super(key: key);
 
   @override
   _DadosUsuarioState createState() => _DadosUsuarioState();
@@ -24,7 +27,6 @@ class _DadosUsuarioState extends State<DadosUsuario> {
   TextEditingController _numeroController = TextEditingController();
   TextEditingController _complementoController = TextEditingController();
   TextEditingController _cidadeController = TextEditingController();
-  TextEditingController _estadoController = TextEditingController();
   TextEditingController _telefoneController = TextEditingController();
   TextEditingController _dataNascimentoController = TextEditingController();
   TextEditingController _pontoGeograficoController = TextEditingController();
@@ -70,17 +72,21 @@ class _DadosUsuarioState extends State<DadosUsuario> {
   }
 
   void _onPressed() {
-    firestoreInstance.collection("users").add({
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    firestoreInstance.collection("users").doc(firebaseUser.uid).set({
+      "nome": _nomeController.text,
+      "sobrenome": _sobrenomeController.text,
+      "email": _emailController.text,
       "cep": _cepController.text,
       "logradouro": _logradouroController.text,
       "numero": _numeroController.text,
       "complemento": _complementoController.text,
       "cidade": _cidadeController.text,
-      "estado": _estadoController.text,
+      "estado": _currentSelectedValue,
+      "ponto geografico": _pontoGeograficoController.text,
       "telefone": _telefoneController.text,
-      "nascimento": _dataNascimentoController.text,
-    }).then((value) {
-      debugPrint(value.id);
+      "aniversario": _dataNascimentoController.text,
+    },SetOptions(merge: true)).then((value) {
       _showOk();
     });
   }
@@ -117,7 +123,22 @@ class _DadosUsuarioState extends State<DadosUsuario> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
-        _emailController.text = widget.email;
+        if(widget.infoUsuario != null){
+          _nomeController.text = widget.infoUsuario.nome;
+          _sobrenomeController.text = widget.infoUsuario.sobrenome;
+          _emailController.text = widget.infoUsuario.email;
+          _cepController.text = widget.infoUsuario.cep;
+          _logradouroController.text = widget.infoUsuario.logradouro;
+          _numeroController.text = widget.infoUsuario.numero;
+          _complementoController.text = widget.infoUsuario.complemento;
+          _cidadeController.text = widget.infoUsuario.cidade;
+          _currentSelectedValue = widget.infoUsuario.estado;
+          _pontoGeograficoController.text = widget.infoUsuario.pontoGeografico;
+          _telefoneController.text = widget.infoUsuario.telefone;
+          _dataNascimentoController.text = widget.infoUsuario.aniversario;
+        } else {
+          _emailController.text = widget.email;
+        }
       });
     });
   }
@@ -159,7 +180,8 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                 child: InputField(
                   controller: _cepController,
                   label: 'CEP',
-                  mascara: MaskTextInputFormatter(mask: "#####-###", filter: {"#": RegExp(r'[0-9]')}),
+                  mascara: MaskTextInputFormatter(
+                      mask: "#####-###", filter: {"#": RegExp(r'[0-9]')}),
                   numeros: true,
                 ),
               ),
@@ -261,7 +283,8 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                 child: InputField(
                   controller: _telefoneController,
                   label: 'Telefone',
-                  mascara: MaskTextInputFormatter(mask: "(##) #####-####", filter: {"#": RegExp(r'[0-9]')}),
+                  mascara: MaskTextInputFormatter(
+                      mask: "(##) #####-####", filter: {"#": RegExp(r'[0-9]')}),
                   numeros: true,
                 ),
               ),
@@ -269,7 +292,10 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                 padding: const EdgeInsets.all(16.0),
                 child: InputField(
                   controller: _dataNascimentoController,
-                  label: 'Data de nascimento',
+                  label: 'Aniversário',
+                  mascara: MaskTextInputFormatter(
+                      mask: "##/##", filter: {"#": RegExp(r'[0-9]')}),
+                  numeros: true,
                 ),
               ),
               Row(

@@ -84,6 +84,7 @@ class _LoginState extends State<Login> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: InputField(
+                senha: true,
                 controller: _senhaController,
                 label: 'Senha',
               ),

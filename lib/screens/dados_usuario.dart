@@ -144,6 +144,22 @@ class _DadosUsuarioState extends State<DadosUsuario> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _nomeController.dispose();
+    _sobrenomeController.dispose();
+    _emailController.dispose();
+    _cepController.dispose();
+    _logradouroController.dispose();
+    _numeroController.dispose();
+    _complementoController.dispose();
+    _cidadeController.dispose();
+    _telefoneController.dispose();
+    _dataNascimentoController.dispose();
+    _pontoGeograficoController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -183,6 +199,11 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                   mascara: MaskTextInputFormatter(
                       mask: "#####-###", filter: {"#": RegExp(r'[0-9]')}),
                   numeros: true,
+                  onChange: (value) {
+                    if(value.length >= 9){
+                      getCep();
+                    }
+                  },
                 ),
               ),
               Padding(
@@ -298,30 +319,18 @@ class _DadosUsuarioState extends State<DadosUsuario> {
                   numeros: true,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    child: Text(
-                      'GET CEP',
-                      style: TextStyle(
-                        color: Theme.of(context).accentColor,
-                      ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24.0, top: 16.0),
+                child: RaisedButton(
+                  color: Theme.of(context).primaryColor,
+                  child: Text(
+                    'ENVIAR',
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
                     ),
-                    onPressed: () => getCep(),
                   ),
-                  RaisedButton(
-                    color: Theme.of(context).primaryColor,
-                    child: Text(
-                      'ENVIAR',
-                      style: TextStyle(
-                        color: Theme.of(context).accentColor,
-                      ),
-                    ),
-                    onPressed: () => _onPressed(),
-                  ),
-                ],
+                  onPressed: () => _onPressed(),
+                ),
               ),
             ],
           ),

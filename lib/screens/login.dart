@@ -1,5 +1,6 @@
 import 'package:cloudfirestoreapp/components/input_field.dart';
 import 'package:cloudfirestoreapp/screens/home.dart';
+import 'package:cloudfirestoreapp/screens/sign_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -69,11 +70,6 @@ class _LoginState extends State<Login> {
                 fontSize: 24.0,
               ),
             ),
-            Icon(
-              Icons.star,
-              size: 52.0,
-            ),
-            Text('Acesse sua conta'),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: InputField(
@@ -90,7 +86,12 @@ class _LoginState extends State<Login> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SignUp(),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.only(
                   top: 32.0,

@@ -9,6 +9,7 @@ class InputField extends StatefulWidget {
   final MaskTextInputFormatter mascara;
   final bool numeros;
   final bool senha;
+  final Function onChange;
 
   const InputField({
     Key key,
@@ -19,6 +20,7 @@ class InputField extends StatefulWidget {
     this.mascara,
     this.numeros = false,
     this.senha = false,
+    this.onChange,
   }) : super(key: key);
 
   @override
@@ -29,6 +31,7 @@ class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: widget.onChange,
       obscureText: widget.senha,
       keyboardType: widget.numeros ? TextInputType.number : null,
       inputFormatters: widget.mascara != null ? [widget.mascara] : null,

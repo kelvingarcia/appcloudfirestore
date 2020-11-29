@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(bottom: 24.0, top: 24.0),
               child: Center(
                 child: Column(
                   children: [

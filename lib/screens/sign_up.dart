@@ -19,28 +19,28 @@ class _SignUpState extends State<SignUp> {
         .createUserWithEmailAndPassword(
             email: _emailController.text, password: _senhaController.text)
         .then((result) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Login()),
-        );
-        }).catchError((err) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Erro"),
-                  content: Text(err.message),
-                  actions: [
-                    FlatButton(
-                      child: Text("Ok"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    }).catchError((err) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Erro"),
+              content: Text(err.message),
+              actions: [
+                FlatButton(
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    });
   }
 
   @override
@@ -64,11 +64,6 @@ class _SignUpState extends State<SignUp> {
                 fontSize: 24.0,
               ),
             ),
-            Icon(
-              Icons.star,
-              size: 52.0,
-            ),
-            Text('Acesse sua conta'),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: InputField(
@@ -85,7 +80,12 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Login(),
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.only(
                   top: 32.0,

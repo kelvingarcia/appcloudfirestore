@@ -23,11 +23,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore:
-  firebase_core:
+  cloud_firestore: "^0.14.3+1"
+  firebase_core: "^0.5.2+1"
   http:
   http_interceptor:
-  firebase_auth:
+  firebase_auth: "^0.18.3+1"
   mask_text_input_formatter:
 
 

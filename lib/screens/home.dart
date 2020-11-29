@@ -20,7 +20,71 @@ class _HomeState extends State<Home> {
   InfoUsuario infoUsuario = null;
   bool futureBuilder = false;
 
-  void _buscaDados(){
+  Future<void> _deletarDados(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Atenção'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Tem certeza que deseja deletar os dados?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Não'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Sim'),
+              onPressed: () {
+                firestoreInstance
+                    .collection('users')
+                    .doc(uid)
+                    .delete()
+                    .then((value) {
+                  Navigator.of(context).pop();
+                  showDialog<void>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Aviso'),
+                        content: SingleChildScrollView(
+                          child: ListBody(
+                            children: <Widget>[
+                              Text(
+                                  'Dados deletados com sucesso!'),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _buscaDados() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       firestoreInstance.collection('users').doc(uid).get().then((value) {
         setState(() {
@@ -43,6 +107,7 @@ class _HomeState extends State<Home> {
       }).catchError((err) {
         setState(() {
           futureBuilder = true;
+          infoUsuario = null;
         });
       });
     });
@@ -162,22 +227,37 @@ class _HomeState extends State<Home> {
                 title: Text(infoUsuario.aniversario),
               ),
             ),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              child: Text(
-                'EDITAR DADOS',
-                style: TextStyle(
-                  color: Theme.of(context).accentColor,
-                ),
-              ),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DadosUsuario(
-                    infoUsuario: infoUsuario,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                RaisedButton(
+                  color: Theme.of(context).primaryColor,
+                  child: Text(
+                    'EDITAR DADOS',
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                    ),
+                  ),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DadosUsuario(
+                        infoUsuario: infoUsuario,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                RaisedButton(
+                  color: Theme.of(context).accentColor,
+                  child: Text(
+                    'EXCLUIR DADOS',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  onPressed: () => _deletarDados(context),
+                ),
+              ],
             ),
           ],
         ),

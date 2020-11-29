@@ -59,8 +59,7 @@ class _HomeState extends State<Home> {
                         content: SingleChildScrollView(
                           child: ListBody(
                             children: <Widget>[
-                              Text(
-                                  'Dados deletados com sucesso!'),
+                              Text('Dados deletados com sucesso!'),
                             ],
                           ),
                         ),
@@ -98,9 +97,9 @@ class _HomeState extends State<Home> {
             complemento: value['complemento'],
             cidade: value['cidade'],
             estado: value['estado'],
-            pontoGeografico: value['ponto geografico'],
+            pontoGeografico: value['ponto_geografico'],
             telefone: value['telefone'],
-            aniversario: value['aniversario'],
+            aniversario: value['mes_aniversario'],
           );
           futureBuilder = true;
         });
@@ -118,162 +117,178 @@ class _HomeState extends State<Home> {
     _buscaDados();
     if (futureBuilder) {
       if (infoUsuario == null) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Home'),
-          ),
-          body: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.person,
-                        size: 56.0,
-                      ),
-                      Text(widget.email),
-                    ],
-                  ),
-                ),
+        return Stack(
+          children: [
+            Scaffold(
+              appBar: AppBar(
+                title: Text('Home'),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  leading: Icon(Icons.warning),
-                  title: Text('Dados inexistentes'),
-                  subtitle:
-                      Text('Clique no botão abaixo para inserir seus dados'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text(
-                    'INSERIR DADOS',
-                    style: TextStyle(
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DadosUsuario(
-                        email: widget.email,
+              body: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            size: 56.0,
+                          ),
+                          Text(widget.email),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      leading: Icon(Icons.warning),
+                      title: Text('Dados inexistentes'),
+                      subtitle: Text(
+                          'Clique no botão abaixo para inserir seus dados'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RaisedButton(
+                      color: Theme.of(context).primaryColor,
+                      child: Text(
+                        'INSERIR DADOS',
+                        style: TextStyle(
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DadosUsuario(
+                            email: widget.email,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       }
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24.0, top: 24.0),
-              child: Center(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 56.0,
-                    ),
-                    Text(
-                      infoUsuario.nome + ' ' + infoUsuario.sobrenome,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
-                    Text(widget.email),
-                  ],
-                ),
-              ),
+      return Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              title: Text('Home'),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                leading: Icon(Icons.place),
-                title: Text(infoUsuario.logradouro + ', ' + infoUsuario.numero),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(infoUsuario.complemento +
-                        ' - ' +
-                        infoUsuario.cidade +
-                        ' - ' +
-                        infoUsuario.estado),
-                    Text(infoUsuario.pontoGeografico),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                leading: Icon(Icons.phone),
-                title: Text(infoUsuario.telefone),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                leading: Icon(Icons.cake),
-                title: Text(infoUsuario.aniversario),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            body: Column(
               children: [
-                RaisedButton(
-                  color: Theme.of(context).primaryColor,
-                  child: Text(
-                    'EDITAR DADOS',
-                    style: TextStyle(
-                      color: Theme.of(context).accentColor,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0, top: 24.0),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.person,
+                          size: 56.0,
+                        ),
+                        Text(
+                          infoUsuario.nome + ' ' + infoUsuario.sobrenome,
+                          style: TextStyle(fontSize: 24.0),
+                        ),
+                        Text(widget.email),
+                      ],
                     ),
                   ),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DadosUsuario(
-                        infoUsuario: infoUsuario,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: Icon(Icons.place),
+                    title: Text(
+                        infoUsuario.logradouro + ', ' + infoUsuario.numero),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(infoUsuario.complemento +
+                            ' - ' +
+                            infoUsuario.cidade +
+                            ' - ' +
+                            infoUsuario.estado),
+                        Text(infoUsuario.pontoGeografico),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: Icon(Icons.phone),
+                    title: Text(infoUsuario.telefone),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    leading: Icon(Icons.cake),
+                    title: Text(infoUsuario.aniversario),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    RaisedButton(
+                      color: Theme.of(context).primaryColor,
+                      child: Text(
+                        'EDITAR DADOS',
+                        style: TextStyle(
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DadosUsuario(
+                            infoUsuario: infoUsuario,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                RaisedButton(
-                  color: Theme.of(context).accentColor,
-                  child: Text(
-                    'EXCLUIR DADOS',
-                    style: TextStyle(
-                      color: Colors.black,
+                    RaisedButton(
+                      color: Theme.of(context).accentColor,
+                      child: Text(
+                        'EXCLUIR DADOS',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      onPressed: () => _deletarDados(context),
                     ),
-                  ),
-                  onPressed: () => _deletarDados(context),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[CircularProgressIndicator(), Text('Aguarde...')],
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text('Home'),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+                Text('Aguarde...')
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

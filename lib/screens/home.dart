@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final firestoreInstance = FirebaseFirestore.instance;
   final String uid = FirebaseAuth.instance.currentUser.uid;
-  InfoUsuario infoUsuario = null;
+  InfoUsuario infoUsuario;
   bool futureBuilder = false;
 
   Future<void> _deletarDados(BuildContext context) async {
